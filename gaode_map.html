@@ -3,24 +3,44 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>校园高德地图</title>
-  <!-- 引入高德地图JS API -->
+  <title>校园失物招领地图</title>
+  <!-- 替换成你的高德API Key -->
   <script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key=2151043eb82e9ab905874c9abb8a4ca0"></script>
   <style>
-    body, html {width: 100%; height: 100%; margin: 0;}
+    body, html {width: 100%; height: 100%; margin: 0; padding: 0;}
     #mapContainer {width: 100%; height: 100vh;}
   </style>
 </head>
 <body>
   <div id="mapContainer"></div>
   <script>
-    // 初始化地图（默认定位到你的校园，可修改center的经纬度）
+    // 初始化地图（替换成你校园的经纬度）
     var map = new AMap.Map('mapContainer', {
-      zoom: 16, // 缩放级别（16级适合校园）
-      center: [113.38,23.34] // 替换为你校园的经纬度（可通过高德地图网页版查询）
+      zoom: 16, // 校园级缩放级别
+      center: [113.38,23.34] // 示例：北京天安门，替换成你的校园经纬度
     });
-    // 添加定位控件（可选，实现“我的位置”功能）
+    // 添加定位控件（可选，方便用户看自己位置）
     map.addControl(new AMap.LocationControl());
+
+    // 核心：接收App传递的参数，在地图上标记失物位置
+    function addMarker(lng, lat, info) {
+      // 创建标记点
+      var marker = new AMap.Marker({
+        position: [lng, lat], // 经纬度
+        map: map, // 绑定到地图
+        icon: "https://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png", // 标记图标（可选）
+        title: info // 鼠标悬浮显示的标题
+      });
+      // 点击标记弹出失物信息
+      marker.on('click', function() {
+        new AMap.InfoWindow({
+          content: info, // 显示的失物信息（类型|名称|描述|经纬度）
+          size: [200, 100] // 弹窗大小
+        }).open(map, marker.getPosition());
+      });
+      // 地图自动定位到标记点
+      map.setCenter([lng, lat]);
+    }
   </script>
 </body>
 </html>
